@@ -4,27 +4,23 @@ import javax.swing.*;
 import java.util.*;
 import javax.swing.Timer;
 import java.awt.geom.*;
+import java.awt.image.BufferedImage;
 
 public class FinalProject extends JPanel implements ActionListener, KeyListener{
 
-  private ArrayList<Character> People = new ArrayList<Character>();
   private Timer t = new Timer(5, this);
-  private double positionX=0;
-  private double positionY=0;
-  private double speedX=0;
+  private double positionX=30;
+  private double positionY=260;
   private double speedY=0;
   private Color characterColor = Color.white;
-  private Color paintColor = Color.white;
-
-  public static void main(String[] args){
-    JFrame mainFrame = new JFrame("Game Simulator");
-    JPanel mainPanel = new FinalProject();
-    mainFrame.setContentPane(mainPanel);
-    mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    mainFrame.setLocation(120,70);
-    mainFrame.setSize(400,300);
-    mainFrame.setVisible(true);
-  }
+  private Color paintColor = Color.cyan;
+  private double posY2;
+  private double posX2=490;
+  private double speedX2 = -1;
+  private boolean pointTest = true;
+  public static int score = 0;
+  public static JLabel label = new JLabel("Score: 0");
+  private ImageIcon image = new ImageIcon("pointImageFinal2.png");
 
   public FinalProject(){
     t.start();
@@ -36,99 +32,77 @@ public class FinalProject extends JPanel implements ActionListener, KeyListener{
   public void paintComponent(Graphics g){
     super.paintComponent(g);
     Graphics2D g2 = (Graphics2D) g;
-    Ellipse2D circle = new Ellipse2D.Double(positionX,positionY,20,20);
-    g2.draw(circle);
+
+    Rectangle2D rectangle = new Rectangle2D.Double(positionX,positionY,10,40);
+    g2.setBackground(characterColor);
+    g2.draw(rectangle);
+    if(pointTest == false){
+      image.paintIcon(this,g2, 0,0);
+    }
+
+    Ellipse2D circle2 = new Ellipse2D.Double(posX2,posY2,10,10);
+    g2.draw(circle2);
+
+
+    if(posX2 <= 0){
+      posX2 = 490;
+      posY2 = Math.random()*490;
+    }
+
   }
 
   public void actionPerformed(ActionEvent e){
-    repaint();
-    positionX+=speedX;
     positionY+=speedY;
+    posX2 += speedX2;
+    if(posX2<=40 && posX2>=30 && posY2 <= (positionY+20) && posY2 >= (positionY-20)){
+      pointTest = false;
+      characterColor = Color.red;
+      repaint();
+    }else{
+      characterColor = Color.white;
+      repaint();
+    }
+
+    if(posX2 <= 0 && pointTest == false){
+      score++;
+      pointTest = true;
+    }
+
+    label.setText("Score: " + score);
+    repaint();
   }
 
   public void up(){
     speedY = -1;
-    speedX = 0;
   }
   public void down(){
     speedY = 1;
-    speedX = 0;
-  }
-  public void right(){
-    speedY = 0;
-    speedX = 1;
-  }
-  public void left(){
-    speedY = 0;
-    speedX = -1;
   }
 
-  public void noSpeed(){
+  public void pause(){
     speedY = 0;
-    speedX = 0;
   }
 
-    public void keyTyped(KeyEvent e) {
+  public void keyTyped(KeyEvent e) {
 
+  }
+
+  public void keyPressed(KeyEvent e) {
+
+    if (e.getKeyCode() == KeyEvent.VK_UP) {
+      up();
+    }
+    if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+      down();
     }
 
-    public void keyPressed(KeyEvent e) {
-
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-          right();
-
-        }
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-          left();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-          up();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-          down();
-        }
+    if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+      pause();
     }
+  }
 
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-          noSpeed();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-          noSpeed();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-          noSpeed();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-          noSpeed();
-        }
+
     }
 
-
-
-  public class Character{
-    private int positionX;
-    private int positionY;
-    private double speed;
-    private Color characterColor;
-
-    public Character(int positionX, int positionY, double speed, Color characterColor){
-      this.positionX = positionX;
-      this.positionY = positionY;
-      this.speed = speed;
-      this.characterColor = characterColor;
-    }
-
-    public String toString(){
-      return "X Coordinate = " + positionX + " Y Coordinate = " + positionY + " speed = " + speed;
-    }
-    public int getPositionX(){
-      return this.positionX;
-    }
-
-    public int getPositionY(){
-      return this.positionY;
-    }
-
-  }
 }
