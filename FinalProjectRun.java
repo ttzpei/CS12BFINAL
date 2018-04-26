@@ -13,8 +13,10 @@ import java.io.FileNotFoundException;
 
 public class FinalProjectRun{
 
-  static HashMap<String,String> ratings = new HashMap<String,String>();
+  static HashMap<String,String > ratings = new HashMap<String,String>();
   static HashMap<String,String> ratings2 = new HashMap<String,String>();
+
+
 
   public static void main(String[] args){
 
@@ -52,6 +54,8 @@ public class FinalProjectRun{
 
           finish.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
+              File explosion = new File("Explosion.mp3");
+          	  playSound(explosion);
               mainView.dispose();
               JFrame finalScreen = new JFrame();
               JPanel finalPanel = new JPanel();
@@ -75,12 +79,17 @@ public class FinalProjectRun{
                 public void actionPerformed(ActionEvent e){
                   int scores = FinalProject.score;
                   String wordScore = Integer.toString(scores);
-                  writeMapToFile(ratings,wordScore);
+                  String nameText = userSaveEntry.getText();
+                  ratings.put(nameText, wordScore);
+                  writeMapToFile(ratings, "ratings.txt");
                 }
               });
 
               load.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
+                  HashMap<String,String > d = readMapFromFile("ratings.txt");
+                  printScore(d);
+                  
                 }
               });
             }
