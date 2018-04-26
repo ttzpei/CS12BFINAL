@@ -13,16 +13,17 @@ import java.io.FileNotFoundException;
 
 public class FinalProjectRun{
 
-  static HashMap<String,String> ratings = new HashMap<String,String>();
-  static HashMap<String,String> ratings2 = new HashMap<String,String>();
+  static HashMap<String,String> ratings = readMapFromFile("scores.txt");
+  static JTextArea scoreScreen = new JTextArea("Scores");
 
   public static void main(String[] args){
 
     JFrame titleScreen = new JFrame("Game Simulation");
     JPanel mainPanel2 = new JPanel();
-    mainPanel2.setLayout(new GridLayout(2,1));
+    mainPanel2.setBackground(Color.gray);
+    mainPanel2.setLayout(new BoxLayout(mainPanel2,BoxLayout.Y_AXIS));
     titleScreen.setContentPane(mainPanel2);
-    JLabel gameName = new JLabel("<html><h1>Gucci Game!<h1><html>");
+    JLabel gameName = new JLabel("<html><h1>Yo, it's just a game man<h1><html>");
     JButton startButton = new JButton("Start");
     mainPanel2.add(gameName);
     mainPanel2.add(startButton);
@@ -35,7 +36,7 @@ public class FinalProjectRun{
 
     startButton.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e){
-          File clap = new File("Burr.wav");
+          File clap = new File("sm64_mario_lets_go.wav");
           playSound(clap);
           titleScreen.dispose();
           JFrame mainView = new JFrame("Game Simulation");
@@ -52,18 +53,26 @@ public class FinalProjectRun{
 
           finish.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
+              File clap2 = new File("victoryff.swf.wav");
+              playSound(clap2);
               mainView.dispose();
+              projectScreen.stopSound();
               JFrame finalScreen = new JFrame();
               JPanel finalPanel = new JPanel();
-              JLabel finalScore = FinalProject.label;
+              JPanel finalPanel1 = new JPanel();
+              JLabel finalScore = projectScreen.getLabel();
               JButton save = new JButton("save");
               JButton load = new JButton("load");
               JTextArea userSaveEntry = new JTextArea("Please put in your name!");
-              finalPanel.setLayout(new FlowLayout());
-              finalPanel.add(finalScore);
-              finalPanel.add(save);
-              finalPanel.add(load);
-              finalPanel.add(userSaveEntry);
+              JTextField fileSearch = new JTextField("scores.txt");
+              finalPanel.setLayout(new BorderLayout());
+              finalPanel1.add(finalScore);
+              finalPanel1.add(save);
+              finalPanel1.add(load);
+              finalPanel1.add(userSaveEntry);
+              finalPanel1.add(fileSearch);
+              finalPanel.add(finalPanel1, BorderLayout.PAGE_START);
+              finalPanel.add(scoreScreen, BorderLayout.CENTER);
               finalScreen.setContentPane(finalPanel);
               finalScreen.setVisible(true);
               finalScreen.setContentPane(finalPanel);
@@ -73,14 +82,20 @@ public class FinalProjectRun{
 
               save.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
-                  int scores = FinalProject.score;
+                  int scores = projectScreen.getScore();
                   String wordScore = Integer.toString(scores);
-                  writeMapToFile(ratings,wordScore);
+                  String name = userSaveEntry.getText();
+                  String fileName = fileSearch.getText();
+                  ratings.put(name,wordScore);
+                  writeMapToFile(ratings,fileName);
                 }
               });
 
               load.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
+                  String fileName = fileSearch.getText();
+                  ratings = readMapFromFile(fileName);
+                  printScore(ratings);
                 }
               });
             }
@@ -109,10 +124,10 @@ public class FinalProjectRun{
   }
 
   public static void printScore(Map<String,String>d){
-    System.out.println("\n\n ScoreList:\n");
+    scoreScreen.setText("\n\n Scorelist\n");
     Set<String> keys = d.keySet();
     for(String name: keys){
-      System.out.println("The grade for "+name+" is "+d.get(name));
+      scoreScreen.setText("\n"+scoreScreen.getText()+"The score for "+name+" is "+d.get(name)+"\n");
     }
   }
 
